@@ -10,7 +10,9 @@ def test_AND_gate(inputM):
         i0 = i[0]
         i1 = i[1]
 
-        AND.activation([i0, i1])
+        output = AND.activation([i0, i1])
+
+        # return de perceptron zodat we die later kunnen simpel kunnen gebruiken in een netwerk.
         return AND
 
 def test_NAND_gate(inputM):
@@ -21,7 +23,9 @@ def test_NAND_gate(inputM):
         i0 = i[0]
         i1 = i[1]
 
-        NAND.activation([i0, i1])
+        output = NAND.activation([i0, i1])
+        
+        # return de perceptron zodat we die later kunnen simpel kunnen gebruiken in een netwerk.
         return NAND
 
 def test_NOT_gate(inputM):
@@ -31,7 +35,9 @@ def test_NOT_gate(inputM):
         print(f"\ninputs: {i}")
         i0 = i[0]
 
-        NOT.activation([i0,])
+        output = NOT.activation([i0,])
+        
+        # return de perceptron zodat we die later kunnen simpel kunnen gebruiken in een netwerk.
         return NOT
 
 def test_OR_gate(inputM):
@@ -42,7 +48,9 @@ def test_OR_gate(inputM):
         i0 = i[0]
         i1 = i[1]
 
-        OR.activation([i0, i1])
+        output = OR.activation([i0, i1])
+        
+        # return de perceptron zodat we die later kunnen simpel kunnen gebruiken in een netwerk.
         return OR
 
 def test_NOR_gate(inputM):
@@ -54,7 +62,9 @@ def test_NOR_gate(inputM):
         i1 = i[1]
         i2 = i[2]
 
-        NOR.activation([i0, i1, i2])
+        output = NOR.activation([i0, i1, i2])
+        
+        # return de perceptron zodat we die later kunnen simpel kunnen gebruiken in een netwerk.
         return NOR
 
 def test_Party_gate(inputM):
@@ -65,7 +75,8 @@ def test_Party_gate(inputM):
         i2 = i[2]
 
         PARTY = Perceptron((.6,.3,.2), -.4)
-        PARTY.activation([i0, i1, i2])
+        
+        output = PARTY.activation([i0, i1, i2])
         del PARTY
 
 def test_XOR_gate(inputM):
@@ -81,8 +92,11 @@ def test_XOR_gate(inputM):
         i0 = i[0]
         i1 = i[1]
 
-        print(XOR.activation([i0,i1]))
-
+        output = XOR.activation([i0,i1])
+        
+        # return de perceptron zodat we die later kunnen simpel kunnen gebruiken in een netwerk.
+        return XOR
+        
 def test_ADDR_gate(inputM):
 
 
@@ -96,8 +110,10 @@ def test_ADDR_gate(inputM):
         i0 = i[0]
         i1 = i[1]
 
-        print(ADDR.activation([i0,i1]))
+        output = ADDR.activation([i0,i1])
 
+        # return de perceptron zodat we die later kunnen simpel kunnen gebruiken in een netwerk.
+        return ADDR
 if __name__ == "__main__" :
 
     inputM1 = np.array([(0,),(1,)])
