@@ -1,9 +1,13 @@
 from random import random
+from subprocess import list2cmdline
+
+from numpy import float16
 
 class Perceptron():
-    def __init__(self, weights, bias=random()) -> None:
+    def __init__(self, weights: list, bias: float) -> None:
         self.weights = weights
         self.b = bias
+        self.e2 = 0
 
     def __str__(self) -> str:
         return f"Perceptron_id: {id(self)}\nWeights: {self.weights}\nBias: {self.b}"
@@ -22,31 +26,20 @@ class Perceptron():
         else:
             return 0
 
-class Perceptron_layer():
-    def __init__(self, perceptrons: list) -> None:
-        self.perceptrons = perceptrons
-    
-    def activation(self, inputs: list) -> tuple:
-        outputs = []
-        for per in self.perceptrons:
-            outputs.append(per.activation(inputs))
-            
-        return tuple(outputs)
-
-class Perceptro_network():
-    def __init__(self, layers: list) -> None:
-        self.layers = layers
-
-    def activation(self, inputs: (int))-> tuple:
-        input = inputs
-        for layer in self.layers:
-            input = layer.activation(input)
-
-    def update(self,):
-        pass
+    def update(self, D, Y, X, eta)-> None:
+        # bereken de error
+        e = D - Y
+        # ga nu voor alle inputs, de verandering van de weight berekenen en pas de weight aan.
+        for input in range(len(X)):
+            deltaW = eta*e*X[input]
+            self.weights[input] = self.weights[input] + deltaW
+        # bereken de verandering van de bias en pas de bias aan.
+        deltaB = eta*e
+        self.b = self.b + deltaB
+        # tel mijn sqeared error op bij de vorige voor later om de MSE te berekennen.
+        self.e2 += e**2
         
-    def loss(self):
-        pass
-
-
-        return input
+    def loss(self, n):
+        MSE = self.e2 / n
+        self.e2 = 0
+        return MSE
