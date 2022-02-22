@@ -28,6 +28,7 @@ def test_learning_rule(TT, epochs)-> None:
         if total_loss == 0:
             print("\nTraining completed early\nStopping process")
             break
+    print(f"\nuiteindelijke waarden:\n{AND}")
 
 if __name__ == "__main__" :
     TT = np.array([
