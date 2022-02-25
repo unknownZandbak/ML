@@ -1,6 +1,4 @@
 from random import random
-from subprocess import list2cmdline
-
 from numpy import float16
 
 class Perceptron():
