@@ -1,12 +1,12 @@
 from math import e
 
-class Perceptron():
+class Neuron():
     def __init__(self, weights: list, bias: float) -> None:
         self.weights = weights
         self.b = bias
 
     def __str__(self) -> str:
-        return f"Perceptron_id: {id(self)}\nWeights: {self.weights}\nBias: {self.b}"
+        return f"Neuron_id: {id(self)}\nWeights: {self.weights}\nBias: {self.b}"
 
     def net_input(self, inputs: list)-> float:
         """
@@ -29,30 +29,30 @@ class Perceptron():
         """
         return 1/(1+e**-x)
 
-class Perceptron_layer():
-    def __init__(self, perceptrons: list) -> None:
-        self.perceptrons = perceptrons
+class Neuron_layer():
+    def __init__(self, Neurons: list) -> None:
+        self.Neurons = Neurons
     
-    def activation(self, inputs: list) -> tuple:
+    def avctivate_neurons(self, inputs: list) -> tuple:
         """
         Activate alle nodes binnen in de laag
         """
         outputs = []
-        for per in self.perceptrons:
+        for per in self.Neurons:
             outputs.append(per.activation(inputs))
             
         return tuple(outputs)
 
-class Perceptro_network():
+class Neuron_network():
     def __init__(self, layers: list) -> None:
         self.layers = layers
 
-    def activation(self, inputs: (int))-> tuple:
+    def feed_forward(self, inputs: (int))-> tuple:
         """
         Activate alle layers in het netwerk
         """
         input = inputs
         for layer in self.layers:
-            input = layer.activation(input)
+            input = layer.avctivate_neurons(input)
         
         return input
