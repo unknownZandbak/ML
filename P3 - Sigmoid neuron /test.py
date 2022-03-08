@@ -1,4 +1,3 @@
-from ast import Del
 import numpy as np
 from neuron import *
 
