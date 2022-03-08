@@ -1,9 +1,14 @@
 from math import e
+from random import normalvariate
 
 class Neuron():
-    def __init__(self, weights: list, bias: float) -> None:
-        self.weights = weights
-        self.b = bias
+    def __init__(self, input_size: int) -> None:
+        self.weights = []
+        self.b = normalvariate(0,.2)
+        self.e2 = 0
+        
+        for i in range(input_size):
+            self.weights.append(normalvariate(0,.2))
 
     def __str__(self) -> str:
         return f"Neuron_id: {id(self)}\nWeights: {self.weights}\nBias: {self.b}"
@@ -30,8 +35,11 @@ class Neuron():
         return 1/(1+e**-x)
 
 class Neuron_layer():
-    def __init__(self, Neurons: list) -> None:
-        self.Neurons = Neurons
+    def __init__(self, input_count: int, neuron_count: int) -> None:
+        self.neurons = []
+
+        for nc in range(neuron_count):
+            self.neurons.append(Neuron(input_count))
     
     def avctivate_neurons(self, inputs: list) -> tuple:
         """
@@ -44,8 +52,16 @@ class Neuron_layer():
         return tuple(outputs)
 
 class Neuron_network():
-    def __init__(self, layers: list) -> None:
-        self.layers = layers
+    def __init__(self, input_size: int, layer_counts: list[int]) -> None:
+        self.input_size = input_size
+        self.layers = []
+        
+        for lci in range(len(layer_counts)):
+            if lci == 0:
+                self.layers.append(Neuron_layer(self.input_size, layer_counts[lci]))
+            else:
+                self.layers.append(Neuron_layer(layer_counts[lci-1], layer_counts[lci]))
+
 
     def feed_forward(self, inputs: (int))-> tuple:
         """
@@ -56,3 +72,15 @@ class Neuron_network():
             input = layer.avctivate_neurons(input)
         
         return input
+
+    def fit(self, train_set: list, epochs: int) -> None:
+        """
+        Training function to train the network
+        """
+
+        for epoch in epochs:
+            print(f"\n=========Epoch {epoch+1}=========")
+
+            for item in train_set:
+                i0 = int(item[0][0])
+                i1 = int(item[0][1])
