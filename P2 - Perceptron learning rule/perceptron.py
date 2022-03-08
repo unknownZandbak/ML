@@ -1,6 +1,3 @@
-from random import random
-from numpy import float16
-
 class Perceptron():
     def __init__(self, weights: list, bias: float) -> None:
         self.weights = weights
