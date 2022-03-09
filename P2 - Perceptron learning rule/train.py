@@ -15,12 +15,9 @@ def train_perceptron(perceptron, TT, epochs)-> None:
             i1 = int(item[0][1])
 
             Y = perceptron.activation([i0, i1])
-            # print(f"")
-            # print(f"Correcte Output: {item[1]}\n")
             print(f"Input: {i0, i1} || gekregen Output: {Y} || Correcte Output: {item[1]}")
 
             perceptron.update(item[1],Y,[i0, i1], .1)
-            # print(f"volgende waarden na het trainen\n{perceptron}")
         total_loss = perceptron.loss(4)
         print(f"Total loss: {total_loss}")
 
