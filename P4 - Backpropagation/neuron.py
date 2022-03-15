@@ -53,28 +53,52 @@ class Neuron_layer():
             neuron_count (int):amount of neuron for this layers
         """
         self.neurons = [Neuron]
-        self.errors = []
-        self.delta_weights = []
-        self.delta_bias = []
+        self.errors = [float]
+        self.delta_weights = [float]
+        self.delta_bias = [float]
 
         # init the given amount of neurons,
         # and pass along the amount of inputs the neuron has.
         for nc in range(neuron_count):
             self.neurons.append(Neuron(input_count))
     
-    def avctivate_neurons(self, inputs: list[float]) -> list:
+    def avctivate_neurons(self, inputs: list) -> list:
         """
         Activate alle nodes binnen in de laag
         """
         outputs = []
-        for per in self.Neurons:
+        for per in self.neurons:
             outputs.append(per.activation(inputs))
             
         return outputs
 
     def fit_output_layer(self, target: int, eta: float) -> None:
         """
-        Calculate all the errors Weights adn bias's for teh neurons in this layer.
+        Calculate all the errors Weights adn bias's for teh neurons in the output layer.
+
+        Args:
+            target (int): Target value of what we want the output to be.
+            eta (float): Constant leraning rate.
+        """
+        #  then append those to a list for later use
+        for neuron in self.neurons:
+            # calculate the error of set neuron
+            err = neuron.out*(1-neuron.out)*-(target - neuron.out)
+            self.errors.append(err)
+            
+            # calculate the new weights for set neuron
+            delta_w = []
+            for w in range(len(neuron.weights)):
+                delta_w.append(eta*neuron.inputs[w]*err)
+                self.delta_weights.append(delta_w)    
+
+            # calculate the new bias for set neuron.
+            delta_b = eta*err
+            self.delta_bias.append(delta_b)
+
+    def fit_hidden_layer(self, target: int, eta: float) -> None:
+        """
+        Calculate all the errors Weights adn bias's for teh neurons in this hidden layer.
 
         Args:
             target (int): Target value of what we want the output to be.
@@ -117,18 +141,17 @@ class Neuron_network():
         """
         Activate all layers in the network.
         """
-        input = inputs
         for layer in self.layers:
-            input = layer.avctivate_neurons(input)
-        
-        return input
+            inputs = layer.avctivate_neurons(layer, inputs)
+        return inputs
 
-    def fit(self, train_set: list, epochs: int, eta=.5) -> None:
+    def train(self, data: list, targets: list, epochs: int, eta=.5) -> None:
         """
         Train the network with the given training data.
 
         Args:
-            train_set (list): data set used for training.
+            data (list): data set used for training.
+            targets (list): targets or the data set
             epochs (int): amount of epchos.
             eta (0.5): Constant learning rate.
         """
@@ -136,13 +159,13 @@ class Neuron_network():
             print(f"\n=========Epoch {epoch+1}=========")
 
             # quick check to see if the data and target list are the same size.
-            if len(train_set["data"] == len(train_set["target"])):
+            if len(data) == len(targets):
 
-                for index in range(len(train_set["data"])):
+                for index in range(len(data)):
 
                     # seprate the inputs and target values
-                    train_input = train_set["data"][index]
-                    target = train_set["target"][index]
+                    train_input = data[index]
+                    target = targets[index]
 
                     Y = self.predict(train_input)
                     print(f"Input: {train_input} || gekregen Output: {Y} || Correcte Output: {target}")
@@ -154,4 +177,4 @@ class Neuron_network():
                         else:
                             self.layers[-layer].fit_output_layer(target, eta)
             else:
-                raise ValueError("Data and Target are not the same size")
+                raise ValueError("Data set and Targets are not the same size")

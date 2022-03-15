@@ -8,13 +8,13 @@ def test_fit_AND()-> None:
     """
     print(f"\n#=#=#=#=#=#=#=# Training AND gate #=#=#=#=#=#=#=#")
     
-    TT = {
-        "data"  : [[0,0],[0,1],[1,0],[1,1]],
-        "target": [[0], [0], [0], [1]]
-    }
+    
+    data = [[0,0],[0,1],[1,0],[1,1]]
+    target = [[0], [0], [0], [1]]
+    
 
     AND = Neuron_network(2, [1])
-    AND.fit(TT, 20)
+    AND.train(data, target, 20)
 
     print(f"\n#=#=#=#=#=#=#=# Training Done #=#=#=#=#=#=#=#")
 
@@ -25,13 +25,11 @@ def test_fit_XOR()-> None:
     """
     print(f"\n#=#=#=#=#=#=#=# Training XOR gate #=#=#=#=#=#=#=#")
     
-    TT = {
-        "data"  : [[0,0],[0,1],[1,0],[1,1]],
-        "target": [[0], [1], [1], [0]]
-    }
+    data = [[0,0],[0,1],[1,0],[1,1]]
+    target = [[0], [1], [1], [0]]
 
     XOR = Neuron_network(2, [2, 1])
-    XOR.fit(TT, 20)
+    XOR.train(data, target, 20)
 
     print(f"\n#=#=#=#=#=#=#=# Training Done #=#=#=#=#=#=#=#")
 
@@ -41,14 +39,12 @@ def test_fit_ADDR()-> None:
         door een netwerk te trainenen voor een Half Adder logic gate 
     """
     print(f"\n#=#=#=#=#=#=#=# Training Half Adder #=#=#=#=#=#=#=#")
-    
-    TT = {
-        "data"  : [[0,0],[0,1],[1,0],[1,1]],
-        "target": [[0,0],[1,0],[1,0],[0,1]]
-    }
+
+    data = [[0,0],[0,1],[1,0],[1,1]]
+    target = [[0,0],[1,0],[1,0],[0,1]]
 
     ADDR = Neuron_network(2, [3, 2])
-    ADDR.fit(TT, 20)
+    ADDR.train(data, target, 20)
 
     print(f"\n#=#=#=#=#=#=#=# Training Done #=#=#=#=#=#=#=#")
 
