@@ -51,8 +51,6 @@ class Neuron_network():
         """
         Activate alle layers in het netwerk
         """
-        input = inputs
         for layer in self.layers:
-            input = layer.avctivate_neurons(input)
-        
-        return input
+            inputs = layer.avctivate_neurons(inputs)
+        return inputs
