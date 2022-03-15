@@ -1,4 +1,3 @@
-import numpy as np
 from neuron import *
 
 def test_fit_AND()-> None:
@@ -10,7 +9,7 @@ def test_fit_AND()-> None:
     
     
     data = [[0,0],[0,1],[1,0],[1,1]]
-    target = [[0], [0], [0], [1]]
+    target = [0, 0, 0, 1]
     
 
     AND = Neuron_network(2, [1])
@@ -26,7 +25,7 @@ def test_fit_XOR()-> None:
     print(f"\n#=#=#=#=#=#=#=# Training XOR gate #=#=#=#=#=#=#=#")
     
     data = [[0,0],[0,1],[1,0],[1,1]]
-    target = [[0], [1], [1], [0]]
+    target = [0, 1, 1, 0]
 
     XOR = Neuron_network(2, [2, 1])
     XOR.train(data, target, 20)

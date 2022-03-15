@@ -8,9 +8,11 @@ class Neuron():
         Args:
             input_size (int): amount of inputs the neuron has
         """
+        self.inputs = []
         self.weights = []
         self.b = normalvariate(0,.2)
-        self.inputs = []
+        self.delta_weights = []
+        self.delta_bias = 0
         self.out = 0
         self.e2 = 0
         
@@ -20,7 +22,7 @@ class Neuron():
     def __str__(self) -> str:
         return f"Neuron_id: {id(self)}\nWeights: {self.weights}\nBias: {self.b}"
 
-    def net_input(self, inputs: list[float])-> float:
+    def net_input(self, inputs: list)-> float:
         """
         Bereken de net input van de neuron en return dit.
         """   
@@ -30,7 +32,7 @@ class Neuron():
             net += inputs[i]*self.weights[i]
         return net
     
-    def activation(self, inputs: list[float])-> int:
+    def activation(self, inputs: list)-> int:
         """
         bereken en return de activation op basis van de sigmoid function
         """           
@@ -52,17 +54,14 @@ class Neuron_layer():
             input_count (int): amount of inputs neuron of this layer wil have
             neuron_count (int):amount of neuron for this layers
         """
-        self.neurons = [Neuron]
-        self.errors = [float]
-        self.delta_weights = [float]
-        self.delta_bias = [float]
+        self.neurons = []
 
         # init the given amount of neurons,
         # and pass along the amount of inputs the neuron has.
         for nc in range(neuron_count):
             self.neurons.append(Neuron(input_count))
     
-    def avctivate_neurons(self, inputs: list) -> list:
+    def activate_neurons(self, inputs: list) -> list:
         """
         Activate alle nodes binnen in de laag
         """
@@ -83,20 +82,21 @@ class Neuron_layer():
         #  then append those to a list for later use
         for neuron in self.neurons:
             # calculate the error of set neuron
+            target = target if type(target) != list else target[self.neurons.index(neuron)]
             err = neuron.out*(1-neuron.out)*-(target - neuron.out)
-            self.errors.append(err)
+            neuron.e2 = err
             
             # calculate the new weights for set neuron
             delta_w = []
             for w in range(len(neuron.weights)):
                 delta_w.append(eta*neuron.inputs[w]*err)
-                self.delta_weights.append(delta_w)    
+                neuron.delta_weights.append(delta_w)    
 
             # calculate the new bias for set neuron.
             delta_b = eta*err
-            self.delta_bias.append(delta_b)
+            neuron.delta_bias = delta_b
 
-    def fit_hidden_layer(self, target: int, eta: float) -> None:
+    def fit_hidden_layer(self, target: int, perv_layer, eta: float) -> None:
         """
         Calculate all the errors Weights adn bias's for teh neurons in this hidden layer.
 
@@ -106,26 +106,30 @@ class Neuron_layer():
         """
         #  then append those to a list for later use
         for neuron in self.neurons:
+
             # calculate the error of set neuron
-            err = neuron.out*(1-neuron.out)*-(target - neuron.out)
-            self.errors.append(err)
+            som = 0
+            for prev_neuron in perv_layer.neurons:
+                som =+ prev_neuron.weights[self.neurons.index(neuron)]*prev_neuron.e2
+            err = neuron.out*(1-neuron.out)*(som)
+            neuron.e2 = err
             
             # calculate the new weights for set neuron
             delta_w = []
             for w in range(len(neuron.weights)):
                 delta_w.append(eta*neuron.inputs[w]*err)
-                self.delta_weights.append(delta_w)    
+                neuron.delta_weights.append(delta_w)      
 
             # calculate the new bias for set neuron.
             delta_b = eta*err
-            self.delta_bias.append(delta_b) 
+            neuron.delta_bias = delta_b
         
 
 
 class Neuron_network():
     def __init__(self, input_size: int, layer_counts: list[int]) -> None:
         self.input_size = input_size
-        self.layers = [Neuron_layer]
+        self.layers = []
 
         # init the layers with the given amount of neurons
         for lci in range(len(layer_counts)):
@@ -134,15 +138,12 @@ class Neuron_network():
             else:
                 self.layers.append(Neuron_layer(layer_counts[lci-1], layer_counts[lci]))
 
-    def __str__(self) -> str:
-        return ""
-
-    def predict(self, inputs: list[float])-> list:
+    def predict(self, inputs: list)-> list:
         """
         Activate all layers in the network.
         """
         for layer in self.layers:
-            inputs = layer.avctivate_neurons(layer, inputs)
+            inputs = layer.activate_neurons(inputs)
         return inputs
 
     def train(self, data: list, targets: list, epochs: int, eta=.5) -> None:
@@ -173,7 +174,7 @@ class Neuron_network():
                     # go trough the layers to establish what the new values should be
                     for layer in range(1,len(self.layers)+1):
                         if layer != 1:
-                            self.layers[-layer].fit_hidden_layer(target, eta)
+                            self.layers[-layer].fit_hidden_layer(target, self.layers[-(layer-1)], eta)
                         else:
                             self.layers[-layer].fit_output_layer(target, eta)
             else:
