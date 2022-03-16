@@ -161,9 +161,9 @@ class Neuron_network():
 
         Args:
             data (list): data set used for training.
-            targets (list): targets or the data set
-            epochs (int): amount of epchos.
-            eta (0.5): Constant learning rate.
+            targets (list): targets or the data set.
+            epochs (int): amount of epochs set to train the network for.
+            eta (0.5): Constant learning rate default=0.5.
         """
         for epoch in range(epochs):
             print(f"\n=========Epoch {epoch+1}=========")
