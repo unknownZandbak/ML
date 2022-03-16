@@ -10,14 +10,14 @@ class Neuron():
         """
         self.inputs = []
         self.weights = []
-        self.b = normalvariate(0,.2)
+        self.b = normalvariate(0,.1)
         self.delta_weights = []
         self.delta_bias = 0
         self.out = 0
         self.e2 = 0
         
         for i in range(input_size):
-            self.weights.append(normalvariate(0,.2))
+            self.weights.append(normalvariate(0,.1))
 
     def __str__(self) -> str:
         return f"Neuron_id: {id(self)}\nWeights: {self.weights}\nBias: {self.b}"
@@ -82,8 +82,8 @@ class Neuron_layer():
         #  then append those to a list for later use
         for neuron in self.neurons:
             # calculate the error of set neuron
-            target = target if type(target) != list else target[self.neurons.index(neuron)]
-            err = neuron.out*(1-neuron.out)*-(target - neuron.out)
+            tmp_target = target if type(target) != list else target[self.neurons.index(neuron)]
+            err = neuron.out*(1-neuron.out)*-(tmp_target - neuron.out)
             neuron.e2 = err
             
             # calculate the new weights for set neuron
@@ -127,10 +127,10 @@ class Neuron_layer():
         for neuron in self.neurons:
             # apply the weights
             for wi in range(len(neuron.weights)):
-                neuron.weights[wi] =- neuron.delta_weights[wi]
+                neuron.weights[wi] -= neuron.delta_weights[wi]
             neuron.delta_weights = []
             # apply the bias
-            neuron.b =- neuron.delta_bias
+            neuron.b -= neuron.delta_bias
             neuron.delta_bias = 0
 
 
