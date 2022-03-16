@@ -1,4 +1,6 @@
 from math import e
+from numpy import append
+from tqdm import trange
 from random import normalvariate
 
 class Neuron():
@@ -14,7 +16,7 @@ class Neuron():
         self.delta_weights = []
         self.delta_bias = 0
         self.out = 0
-        self.e2 = 0
+        self.e = 0
         
         for i in range(input_size):
             self.weights.append(normalvariate(0,.1))
@@ -84,7 +86,7 @@ class Neuron_layer():
             # calculate the error of set neuron
             tmp_target = target if type(target) != list else target[self.neurons.index(neuron)]
             err = neuron.out*(1-neuron.out)*-(tmp_target - neuron.out)
-            neuron.e2 = err
+            neuron.e = err
             
             # calculate the new weights for set neuron
             for w in range(len(neuron.weights)):
@@ -108,9 +110,9 @@ class Neuron_layer():
             # calculate the error of set neuron
             som = 0
             for prev_neuron in perv_layer.neurons:
-                som =+ prev_neuron.weights[self.neurons.index(neuron)]*prev_neuron.e2
+                som =+ prev_neuron.weights[self.neurons.index(neuron)]*prev_neuron.e
             err = neuron.out*(1-neuron.out)*(som)
-            neuron.e2 = err
+            neuron.e = err
             
             # calculate the new weights for set neuron
             for w in range(len(neuron.weights)):
@@ -155,30 +157,32 @@ class Neuron_network():
             inputs = layer.activate_neurons(inputs)
         return inputs
 
-    def train(self, data: list, targets: list, epochs: int, eta=.5) -> None:
+    def train(self, X: list, y: list, epochs: int, eta=.5) -> None:
         """
         Train the network with the given training data.
 
         Args:
-            data (list): data set used for training.
-            targets (list): targets or the data set.
+            X (list): data set used for training.
+            y (list): targets or the data set.
             epochs (int): amount of epochs set to train the network for.
             eta (0.5): Constant learning rate default=0.5.
+
+        Raises:
+            ValueError: Data set and Targets are not the same size
         """
-        for epoch in range(epochs):
-            print(f"\n=========Epoch {epoch+1}=========")
+        for epoch in trange(epochs, desc="Progress", unit=" epoch"):
 
             # quick check to see if the data and target list are the same size.
-            if len(data) == len(targets):
+            if len(X) == len(y):
 
-                for index in range(len(data)):
+                for index in range(len(X)):
 
                     # seprate the inputs and target values
-                    train_input = data[index]
-                    target = targets[index]
+                    train_input = X[index]
+                    target = y[index]
 
                     Y = self.predict(train_input)
-                    print(f"Input: {train_input} || gekregen Output: {Y} || Correcte Output: {target}")
+                    # print(f"Input: {train_input} || gekregen Output: {Y} || Correcte Output: {target}")
 
                     # go trough the layers to calculate all the new values.
                     for layer in range(1,len(self.layers)+1):
@@ -190,6 +194,51 @@ class Neuron_network():
                     # once everything has been calculated we can apply the new values.
                     for layer in self.layers:
                         layer.apply_values()
-            
+        
             else:
                 raise ValueError("Data set and Targets are not the same size")
+        
+    def evaluate(self, X: list, y: list) -> None:
+        """
+        Test the network with a unseen test set of data
+
+        Args:
+            X (list): data set used for evaluating.
+            y (list): targets or the data set.
+
+        Raises:
+            ValueError: Data set and Targets are not the same size
+        """
+        accuracy_l = []
+        SE_l = []
+        # quick check to see if the data and target list are the same size.
+        if len(X) == len(y):
+
+                for index in range(len(X)):
+
+                    # seprate the inputs and target values
+                    train_input = X[index]
+                    target = y[index]
+
+                    Y = self.predict(train_input)
+
+                    # collect accuracy
+                    for i in range(len(Y)):
+                        match target[i]:
+                            case 1:
+                                if Y[i] > .5: accuracy_l.append(1)
+                                else: accuracy_l.append(0)
+                            case 0:
+                                if Y[i] <= .5: accuracy_l.append(1)
+                                else: accuracy_l.append(0)
+
+                    # collect SE of this
+                    for layer in self.layers:
+                        for neuron in layer.neurons:
+                            SE_l.append(neuron.e**2)
+                
+                print(f"MSE:\t{sum(SE_l)/len(SE_l)}\n"+f"Accuracy:\t{sum(accuracy_l)/len(accuracy_l)}")
+
+
+        else:
+            raise ValueError("Data set and Targets are not the same size")
