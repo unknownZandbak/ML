@@ -1,6 +1,6 @@
 from neuron import *
 
-def test_fit_AND()-> None:
+def test_fit_AND(epochs)-> None:
     """
         Test de backpropagation algoritme,
         door een netwerk te trainenen voor een AND logic gate 
@@ -13,11 +13,11 @@ def test_fit_AND()-> None:
     
 
     AND = Neuron_network(2, [1])
-    AND.train(data, target, 20)
+    AND.train(data, target, epochs)
 
     print(f"\n#=#=#=#=#=#=#=# Training Done #=#=#=#=#=#=#=#")
 
-def test_fit_XOR()-> None:
+def test_fit_XOR(epochs)-> None:
     """
         Test de backpropagation algoritme,
         door een netwerk te trainenen voor een XOR logic gate 
@@ -28,11 +28,11 @@ def test_fit_XOR()-> None:
     target = [0, 1, 1, 0]
 
     XOR = Neuron_network(2, [2, 1])
-    XOR.train(data, target, 20)
+    XOR.train(data, target, epochs)
 
     print(f"\n#=#=#=#=#=#=#=# Training Done #=#=#=#=#=#=#=#")
 
-def test_fit_ADDR()-> None:
+def test_fit_ADDR(epochs)-> None:
     """
         Test de backpropagation algoritme,
         door een netwerk te trainenen voor een Half Adder logic gate 
@@ -43,12 +43,12 @@ def test_fit_ADDR()-> None:
     target = [[0,0],[1,0],[1,0],[0,1]]
 
     ADDR = Neuron_network(2, [3, 2])
-    ADDR.train(data, target, 20)
+    ADDR.train(data, target, epochs)
 
     print(f"\n#=#=#=#=#=#=#=# Training Done #=#=#=#=#=#=#=#")
 
 if __name__ == "__main__" :
 
-    test_fit_AND()
-    test_fit_XOR()
-    test_fit_ADDR()
+    test_fit_AND(2000)
+    test_fit_XOR(3000)
+    test_fit_ADDR(5000)
