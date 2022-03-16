@@ -87,10 +87,8 @@ class Neuron_layer():
             neuron.e2 = err
             
             # calculate the new weights for set neuron
-            delta_w = []
             for w in range(len(neuron.weights)):
-                delta_w.append(eta*neuron.inputs[w]*err)
-                neuron.delta_weights.append(delta_w)    
+                neuron.delta_weights.append(eta*neuron.inputs[w]*err)   
 
             # calculate the new bias for set neuron.
             delta_b = eta*err
@@ -115,15 +113,26 @@ class Neuron_layer():
             neuron.e2 = err
             
             # calculate the new weights for set neuron
-            delta_w = []
             for w in range(len(neuron.weights)):
-                delta_w.append(eta*neuron.inputs[w]*err)
-                neuron.delta_weights.append(delta_w)      
+                neuron.delta_weights.append(eta*neuron.inputs[w]*err)     
 
             # calculate the new bias for set neuron.
             delta_b = eta*err
             neuron.delta_bias = delta_b
-        
+    
+    def apply_values(self) -> None:
+        """
+        With this method we will apply all the newly calculated values for the nerons in this layer.
+        """
+        for neuron in self.neurons:
+            # apply the weights
+            for wi in range(len(neuron.weights)):
+                neuron.weights[wi] =- neuron.delta_weights[wi]
+            neuron.delta_weights = []
+            # apply the bias
+            neuron.b =- neuron.delta_bias
+            neuron.delta_bias = 0
+
 
 
 class Neuron_network():
@@ -171,11 +180,16 @@ class Neuron_network():
                     Y = self.predict(train_input)
                     print(f"Input: {train_input} || gekregen Output: {Y} || Correcte Output: {target}")
 
-                    # go trough the layers to establish what the new values should be
+                    # go trough the layers to calculate all the new values.
                     for layer in range(1,len(self.layers)+1):
                         if layer != 1:
                             self.layers[-layer].fit_hidden_layer(target, self.layers[-(layer-1)], eta)
                         else:
                             self.layers[-layer].fit_output_layer(target, eta)
+
+                    # once everything has been calculated we can apply the new values.
+                    for layer in self.layers:
+                        layer.apply_values()
+            
             else:
                 raise ValueError("Data set and Targets are not the same size")
