@@ -1,5 +1,6 @@
 from math import e
-from numpy import append
+from tokenize import String
+from numpy import append, argmax
 from tqdm import trange
 from random import normalvariate
 
@@ -141,6 +142,8 @@ class Neuron_network():
     def __init__(self, input_size: int, layer_counts: list[int]) -> None:
         self.input_size = input_size
         self.layers = []
+        self.accuracy_l = []
+        self.MSE_l = []
 
         # init the layers with the given amount of neurons
         for lci in range(len(layer_counts)):
@@ -156,6 +159,18 @@ class Neuron_network():
         for layer in self.layers:
             inputs = layer.activate_neurons(inputs)
         return inputs
+
+    def MSE_acc(self, Y, target) -> None:
+        # use argmax to collect accuracy || Assumes there is a 1 in the target list for classifying
+        mxi = argmax(Y)
+        if 1 in target:
+            if mxi == target.index(1): self.accuracy_l.append(1)
+            else: self.accuracy_l.append(0)
+
+        # collect SE of this network model.
+        for layer in self.layers:
+            for neuron in layer.neurons:
+                self.MSE_l.append(neuron.e**2)
 
     def train(self, X: list, y: list, epochs: int, eta=.5) -> None:
         """
@@ -194,9 +209,14 @@ class Neuron_network():
                     # once everything has been calculated we can apply the new values.
                     for layer in self.layers:
                         layer.apply_values()
+                    
+                    self.MSE_acc(Y, target)
         
             else:
                 raise ValueError("Data set and Targets are not the same size")
+        print(f"MSE:\t{sum(self.MSE_l)/len(self.MSE_l)}\n"+f"Accuracy:\t{sum(self.accuracy_l)/len(self.accuracy_l)}")
+        self.accuracy_l = []
+        self.MSE_l = []
         
     def evaluate(self, X: list, y: list) -> None:
         """
@@ -209,36 +229,19 @@ class Neuron_network():
         Raises:
             ValueError: Data set and Targets are not the same size
         """
-        accuracy_l = []
-        SE_l = []
         # quick check to see if the data and target list are the same size.
         if len(X) == len(y):
 
-                for index in range(len(X)):
+            for index in range(len(X)):
 
-                    # seprate the inputs and target values
-                    train_input = X[index]
-                    target = y[index]
+                # seprate the inputs and target values
+                train_input = X[index]
+                target = y[index]
 
-                    Y = self.predict(train_input)
-
-                    # collect accuracy
-                    for i in range(len(Y)):
-                        match target[i]:
-                            case 1:
-                                if Y[i] > .5: accuracy_l.append(1)
-                                else: accuracy_l.append(0)
-                            case 0:
-                                if Y[i] <= .5: accuracy_l.append(1)
-                                else: accuracy_l.append(0)
-
-                    # collect SE of this
-                    for layer in self.layers:
-                        for neuron in layer.neurons:
-                            SE_l.append(neuron.e**2)
-                
-                print(f"MSE:\t{sum(SE_l)/len(SE_l)}\n"+f"Accuracy:\t{sum(accuracy_l)/len(accuracy_l)}")
-
-
+                Y = self.predict(train_input)
+                self.MSE_acc(Y, target)
+            print(f"MSE:\t{sum(self.MSE_l)/len(self.MSE_l)}\n"+f"Accuracy:\t{sum(self.accuracy_l)/len(self.accuracy_l)}")
+            self.accuracy_l = []
+            self.MSE_l = []
         else:
             raise ValueError("Data set and Targets are not the same size")

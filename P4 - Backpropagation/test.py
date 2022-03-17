@@ -52,6 +52,6 @@ def test_fit_ADDR(epochs)-> None:
 
 if __name__ == "__main__" :
 
-    test_fit_AND(2000)
-    test_fit_XOR(3000)
-    test_fit_ADDR(5000)
+    # test_fit_AND(2000)
+    # test_fit_XOR(3000)
+    test_fit_ADDR(5)
